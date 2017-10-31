@@ -3,8 +3,11 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const bodyParser = require('body-parser');
 const api = express.Router();
+
+//const path = require('path');
+const bodyParser = require('body-parser');
+
 if(process.env.NODE_ENV != "production") {
 	require('dotenv').config();
 }
@@ -14,6 +17,28 @@ if(process.env.NODE_ENV != "production") {
  app.use(cors());
  app.use(bodyParser.urlencoded({ extended: true }));
  app.use(bodyParser.json());
+
+
+/******************** FORCE SSL ********************/
+
+if(process.env.NODE_ENV == "production") {
+
+	// If an incoming request uses a protocol other than HTTPS,
+	// redirect that request to the same url but with HTTPS
+	const forceSSL = function() {
+		return function (req, res, next) {
+			if (req.headers['x-forwarded-proto'] !== 'https') {
+				return res.redirect(['https://', req.get('Host'), req.url].join(''));
+			}
+			next();
+		}
+	}
+
+
+	// Instruct the app to use the forceSSL middleware
+	app.use(forceSSL());
+	api.use(forceSSL());
+}
 
 
 /******************** SETUP API ROUTES ********************/
