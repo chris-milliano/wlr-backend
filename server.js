@@ -1,9 +1,10 @@
+/******************** DECLARE LIBS AND VARS ********************/
 // Add Libs
 const express = require('express');
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
-const router = express.Router();
+const api = express.Router();
 if(process.env.NODE_ENV != "production") {
 	require('dotenv').config();
 }
@@ -15,14 +16,16 @@ if(process.env.NODE_ENV != "production") {
  app.use(bodyParser.json());
 
 
+/******************** SETUP API ROUTES ********************/
+
 // Handle base route
-router.get('/', function(req, res) {
+api.get('/', function(req, res) {
     res.json( { message: 'Welcome to our API, please visit tailgateclub.com' });
 });
 
 
 // Handle sample variable route
-router.get('/sample/:someVar', function(req, res) {
+api.get('/sample/:someVar', function(req, res) {
 
     // Make some sample JSON to return to user
     let sampleJSON = {
@@ -34,8 +37,26 @@ router.get('/sample/:someVar', function(req, res) {
 });
 
 
+api.post('/visited-marker', function(req, res) {
+	console.log("POST at /visited-marker");
+});
+
+
+/******************** START SERVER ********************/
+
 // Move all 'router' routes under '/api'
-app.use('/api', router);
+app.use('/api', api);
+
+
+// Statically serve the dist folder
+app.use(express.static(__dirname + '/wlr-site/dist'));
+
+
+// This route needs to be last
+// This will serve the site and pass the path to the Angular app
+app.get('*', function(req, res) {
+	res.sendFile(__dirname + '/wlr-site/dist/index.html');
+});
 
 
 // Start server
