@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const api = express.Router();
 
-//const path = require('path');
+const path = require('path');
 const bodyParser = require('body-parser');
 
 if(process.env.NODE_ENV != "production") {
@@ -74,13 +74,13 @@ app.use('/api', api);
 
 
 // Statically serve the dist folder
-app.use(express.static(__dirname + '/wlr-site/dist'));
+app.use(express.static(path.join(__dirname + '/wlr-site/dist')));
 
 
 // This route needs to be last
 // This will serve the site and pass the path to the Angular app
 app.get('*', function(req, res) {
-	res.sendFile(__dirname + '/wlr-site/dist/index.html');
+	res.sendFile(path.join(__dirname + '/wlr-site/dist/index.html'));
 });
 
 
