@@ -18,7 +18,7 @@ if(process.env.NODE_ENV != "production") {
  app.use(bodyParser.urlencoded({ extended: true }));
  app.use(bodyParser.json());
 
-
+// Heroku change
 /******************** FORCE SSL ********************/
 
 // if(process.env.NODE_ENV == "production") {
